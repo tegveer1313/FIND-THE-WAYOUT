@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8545c0e92bb5d1045a586df78ce72734, type: 3}
+  m_Name: SampleMapGenerator
+  m_EditorClassIdentifier: 
+  properties:
+    length: 100
+    width: 100
+    initialMapDensity: 0.48
+    expandTunnels: 1
+    borderSize: 1
+    minWallSize: 50
+    minFloorSize: 50
+  seed: 1605358688
