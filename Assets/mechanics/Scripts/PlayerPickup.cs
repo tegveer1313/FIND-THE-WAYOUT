@@ -12,6 +12,10 @@ public class PickupDestroyTargets
 
 public class PlayerPickup : MonoBehaviour
 {
+    [Header("Pickup Layer")]
+    public LayerMask HitLayer;
+    [Space(20)]
+
     [Header("Pickup Settings")]
     public Transform holdPosition;
     public float throwForce = 10f;
@@ -38,10 +42,11 @@ public class PlayerPickup : MonoBehaviour
     [HideInInspector] public Rigidbody heldRigidbody;
 
     // Track if object was picked by the player
-    private bool objectPickedByPlayer = false;
+    public bool objectPickedByPlayer = false;
 
     // ✅ coroutine handle for destruction
     private Coroutine destroyCoroutine;
+    private Color color;
 
     private void Awake()
     {
@@ -74,31 +79,38 @@ public class PlayerPickup : MonoBehaviour
     private void PickupOrReleaseOrPlace()
     {
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
-        Physics.Raycast(ray, out RaycastHit hit, pickupRange);
+        Physics.Raycast(ray, out RaycastHit hit, pickupRange, HitLayer);
 
-        TorchStand stand = hit.collider != null ? hit.collider.GetComponent<TorchStand>() : null;
+        if (hit.collider.tag == "PickAble")
+        {            
+            // Debug.DrawLine(playerCamera.transform.position, hit.transform.position, Color.red, 30f);
+            Debug.DrawRay(playerCamera.transform.position, playerCamera.transform.forward, Color.yellow, 30f);
+            Debug.Log(hit.transform.name);
+            
+            TorchStand stand = hit.collider != null ? hit.collider.GetComponent<TorchStand>() : null;
 
-        if (heldObject == null)
-        {
-            if (stand != null && stand.currentTorch != null)
+            if (heldObject == null)
             {
-                PickFromStand(stand);
+                if (stand != null && stand.currentTorch != null)
+                {
+                    PickFromStand(stand);
+                    return;
+                }
+                else
+                {
+                    TryPickup();
+                    return;
+                }
+            }
+
+            if (stand != null)
+            {
+                PlaceOnStand(stand);
                 return;
             }
-            else
-            {
-                TryPickup();
-                return;
-            }
-        }
 
-        if (stand != null)
-        {
-            PlaceOnStand(stand);
-            return;
+            Release();
         }
-
-        Release();
     }
 
     private void TryPickup()
