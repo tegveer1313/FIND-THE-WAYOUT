@@ -46,7 +46,6 @@ public class PlayerPickup : MonoBehaviour
 
     // ✅ coroutine handle for destruction
     private Coroutine destroyCoroutine;
-    private Color color;
 
     private void Awake()
     {
@@ -56,14 +55,14 @@ public class PlayerPickup : MonoBehaviour
     private void OnEnable()
     {
         inputActions.Enable();
-        inputActions.Player.Pickup.performed += ctx => PickupOrReleaseOrPlace();
-        inputActions.Player.Throw.performed += ctx => Throw();
+        inputActions.Player.Pickup.performed += OnPickupPerformed;
+        inputActions.Player.Throw.performed += OnThrowPerformed;
     }
 
     private void OnDisable()
     {
-        inputActions.Player.Pickup.performed -= ctx => PickupOrReleaseOrPlace();
-        inputActions.Player.Throw.performed -= ctx => Throw();
+        inputActions.Player.Pickup.performed -= OnPickupPerformed;
+        inputActions.Player.Throw.performed -= OnThrowPerformed;
         inputActions.Disable();
     }
 
@@ -76,40 +75,50 @@ public class PlayerPickup : MonoBehaviour
             Debug.LogError("Player camera not assigned and Camera.main not found!");
     }
 
+    private void OnPickupPerformed(InputAction.CallbackContext ctx)
+    {
+        PickupOrReleaseOrPlace();
+    }
+
+    private void OnThrowPerformed(InputAction.CallbackContext ctx)
+    {
+        Throw();
+    }
+
     private void PickupOrReleaseOrPlace()
     {
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
-        Physics.Raycast(ray, out RaycastHit hit, pickupRange, HitLayer);
-
-        if (hit.collider.tag == "PickAble")
-        {            
-            // Debug.DrawLine(playerCamera.transform.position, hit.transform.position, Color.red, 30f);
-            Debug.DrawRay(playerCamera.transform.position, playerCamera.transform.forward, Color.yellow, 30f);
-            Debug.Log(hit.transform.name);
-            
-            TorchStand stand = hit.collider != null ? hit.collider.GetComponent<TorchStand>() : null;
-
-            if (heldObject == null)
+        if (Physics.Raycast(ray, out RaycastHit hit, pickupRange, HitLayer))
+        {
+            if (hit.collider.CompareTag("PickAble"))
             {
-                if (stand != null && stand.currentTorch != null)
+                Debug.DrawRay(playerCamera.transform.position, playerCamera.transform.forward, Color.yellow, 30f);
+                Debug.Log(hit.transform.name);
+
+                TorchStand stand = hit.collider.GetComponent<TorchStand>();
+
+                if (heldObject == null)
                 {
-                    PickFromStand(stand);
+                    if (stand != null && stand.currentTorch != null)
+                    {
+                        PickFromStand(stand);
+                        return;
+                    }
+                    else
+                    {
+                        TryPickup();
+                        return;
+                    }
+                }
+
+                if (stand != null)
+                {
+                    PlaceOnStand(stand);
                     return;
                 }
-                else
-                {
-                    TryPickup();
-                    return;
-                }
-            }
 
-            if (stand != null)
-            {
-                PlaceOnStand(stand);
-                return;
+                Release();
             }
-
-            Release();
         }
     }
 
@@ -208,7 +217,6 @@ public class PlayerPickup : MonoBehaviour
 
             Debug.Log("Item thrown!");
 
-            // ❌ Cancel destruction
             if (destroyCoroutine != null)
             {
                 StopCoroutine(destroyCoroutine);
@@ -302,18 +310,10 @@ public class PlayerPickup : MonoBehaviour
 
         if (heldObject != null && objectPickedByPlayer) // ✅ Only destroy if still held
         {
+            // ✅ Destroy only child targets (like fire), not the heldObject itself
             DestroyTargetsWithDelay(item);
 
-            // Optionally also destroy the heldObject if in mapping
-            var mapping = destroyMappings.Find(m => m.pickupItem == item);
-            if (mapping != null && mapping.destroyTargets.Contains(heldObject))
-            {
-                Destroy(heldObject);
-            }
-
-            heldObject = null;
-            heldRigidbody = null;
-            objectPickedByPlayer = false;
+            // The stick (heldObject) stays intact
         }
 
         destroyCoroutine = null; // clear handle
@@ -331,7 +331,7 @@ public class PlayerPickup : MonoBehaviour
             foreach (var target in mapping.destroyTargets)
             {
                 if (target != null)
-                    Destroy(target, 0f); // immediate when delay already handled by coroutine
+                    Destroy(target, 0f); // immediate
             }
         }
     }

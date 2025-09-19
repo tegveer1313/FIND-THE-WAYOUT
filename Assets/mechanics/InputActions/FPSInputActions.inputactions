@@ -71,7 +71,7 @@
                 {
                     "name": "ThrowLight",
                     "type": "Button",
-                    "id": "371f9df3-f28f-41f4-a692-a07a70445fc1",
+                    "id": "cacf915a-72a6-4a5b-8d64-648953cbe12c",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -279,8 +279,8 @@
                 },
                 {
                     "name": "",
-                    "id": "529e37a0-87cf-4ca0-b385-e62886e9765d",
-                    "path": "<Keyboard>/e",
+                    "id": "89239d2e-fccc-4ca2-bc49-f61f2a04aeb4",
+                    "path": "<Keyboard>/#(E)",
                     "interactions": "",
                     "processors": "",
                     "groups": ";KeyAndMouse",
@@ -290,11 +290,11 @@
                 },
                 {
                     "name": "",
-                    "id": "dc26551b-3ba5-4603-9c1e-c0119fcded5f",
-                    "path": "<XInputController>/buttonWest",
+                    "id": "5551b7a7-058f-407f-ae57-a3884b52e34d",
+                    "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";GamePad",
+                    "groups": "",
                     "action": "ThrowLight",
                     "isComposite": false,
                     "isPartOfComposite": false
