@@ -659,6 +659,10 @@ PrefabInstance:
       propertyPath: 'destroyMappings.Array.data[1].destroyTargets.Array.data[0]'
       value: 
       objectReference: {fileID: 7898422417439979742}
+    - target: {fileID: 2057814453512054773, guid: 7aa9e9f704d02ed478702920fb931889, type: 3}
+      propertyPath: lookSensitivity
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 3351873737160398943, guid: 7aa9e9f704d02ed478702920fb931889, type: 3}
       propertyPath: m_Name
       value: FPSCharacter Variant
