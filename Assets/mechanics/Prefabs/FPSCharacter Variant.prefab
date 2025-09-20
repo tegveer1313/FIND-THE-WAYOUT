@@ -948,7 +948,7 @@ GameObject:
   - component: {fileID: 4617683156337731109}
   m_Layer: 0
   m_Name: FPSCharacter Variant
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1044,7 +1044,7 @@ MonoBehaviour:
   crouchingHeight: 1
   instantCrouch: 1
   crouchTransitionSpeed: 3
-  lookSensitivity: 25
+  lookSensitivity: 50
   minLookAngle: -53
   maxLookAngle: 55
   cameraHolder: {fileID: 314074443814002757}
@@ -1178,7 +1178,7 @@ GameObject:
   - component: {fileID: 882072019563483213}
   m_Layer: 0
   m_Name: Body
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1572,7 +1572,7 @@ GameObject:
   - component: {fileID: 5042591561382577754}
   m_Layer: 0
   m_Name: PickupHolder (1)
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1934,7 +1934,7 @@ GameObject:
   - component: {fileID: 7431743760674672580}
   m_Layer: 0
   m_Name: PickupHolder
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2280,7 +2280,7 @@ GameObject:
   - component: {fileID: 4953349959155163831}
   m_Layer: 0
   m_Name: Armature
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2313,7 +2313,7 @@ GameObject:
   - component: {fileID: 1827564570944102861}
   m_Layer: 0
   m_Name: Joints
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2547,7 +2547,7 @@ GameObject:
   - component: {fileID: 314074443814002757}
   m_Layer: 0
   m_Name: CameraHolder
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
