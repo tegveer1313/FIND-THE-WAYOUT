@@ -1,5 +1,5 @@
 {
-    "name": "StarterAssets",
+    "name": "PlayerinputLogic",
     "maps": [
         {
             "name": "Player",
@@ -45,6 +45,15 @@
                     "name": "PickUp",
                     "type": "Button",
                     "id": "99e3f496-23ba-4f3f-a1e5-7c13a3462442",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "DrawPad",
+                    "type": "PassThrough",
+                    "id": "48ea058a-ea8c-44ce-8670-5492b498ef22",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -247,6 +256,17 @@
                     "processors": "",
                     "groups": ";Gamepad",
                     "action": "PickUp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a7b1fa3a-4624-47ff-bdfb-e3eca1da3289",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";KeyboardMouse",
+                    "action": "DrawPad",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
