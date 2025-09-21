@@ -117,4 +117,13 @@ public class DrawingPad : MonoBehaviour
     {
         return tex;
     }
+
+    public void OnEraser()
+    {
+        // tex.SetPixels(backgroundColor);
+    }
+    public void OnPen()
+    {
+        tex.SetPixel(textureWidth, textureHeight, brushColor);
+    } 
 }
