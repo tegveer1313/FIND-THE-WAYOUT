@@ -4,8 +4,8 @@ using UnityEngine.InputSystem;
 public class LightThrowWithE : MonoBehaviour
 {
     [Header("References")]
-    public PlayerPickup playerPickup;      // Reference to PlayerPickup component
-    public float lightThrowForce = 3f;     // Small throw force
+    public PlayerPickup playerPickup;       // Reference to PlayerPickup component
+    public float throwForce = 10f;          // Throw force for E key
 
     private FPSInputActions inputActions;
 
@@ -21,17 +21,17 @@ public class LightThrowWithE : MonoBehaviour
     {
         inputActions.Enable();
 
-        // Use E key for light throw
-        inputActions.Player.ThrowLight.performed += ctx => DoLightThrow();
+        // Interact key (E) for throw
+        inputActions.Player.Interact.performed += ctx => DoThrow();
     }
 
     private void OnDisable()
     {
-        inputActions.Player.ThrowLight.performed -= ctx => DoLightThrow();
+        inputActions.Player.Interact.performed -= ctx => DoThrow();
         inputActions.Disable();
     }
 
-    private void DoLightThrow()
+    private void DoThrow()
     {
         if (playerPickup == null || playerPickup.heldObject == null) return;
 
@@ -40,31 +40,10 @@ public class LightThrowWithE : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit, playerPickup.pickupRange))
         {
             TorchStand stand = hit.collider.GetComponent<TorchStand>();
-            if (stand != null)
-            {
-                // Don't throw if aiming at a stand
-                return;
-            }
+            if (stand != null) return;  // Don't throw if aiming at a stand
         }
 
-        GameObject heldObj = playerPickup.heldObject;
-        Rigidbody heldRb = playerPickup.heldRigidbody;
-        Camera playerCam = playerPickup.playerCamera;
-
-        if (heldObj != null && heldRb != null && playerCam != null)
-        {
-            heldObj.transform.SetParent(null);
-            heldRb.isKinematic = false;
-            heldRb.detectCollisions = true;
-            heldRb.linearVelocity = Vector3.zero;
-            heldRb.angularVelocity = Vector3.zero;
-
-            heldRb.AddForce(playerCam.transform.forward * lightThrowForce, ForceMode.Impulse);
-
-            Debug.Log("Item lightly thrown!");
-
-            playerPickup.heldObject = null;
-            playerPickup.heldRigidbody = null;
-        }
+        playerPickup.heldObject = null;
+        playerPickup.heldRigidbody = null;
     }
 }
