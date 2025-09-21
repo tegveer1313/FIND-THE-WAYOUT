@@ -1,20 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections;
 using System.Collections.Generic;
-
-[System.Serializable]
-public class PickupDestroyTargets
-{
-    public PickupItem pickupItem;                // Which item this mapping belongs to
-    public List<GameObject> destroyTargets;      // Objects that should be destroyed with it
-}
 
 public class PlayerPickup : MonoBehaviour
 {
     [Header("Pickup Layer")]
     public LayerMask HitLayer;
-    [Space(20)]
 
     [Header("Pickup Settings")]
     public Transform holdPosition;
@@ -30,22 +21,11 @@ public class PlayerPickup : MonoBehaviour
     [Header("References")]
     public Camera playerCamera;
 
-    [Header("Destroy Settings")]
-    public bool destroyOnPickUp = false; // ✅ only option now
-    public float destroyDelay = 5f;      // how long before destruction while held
-
-    [Tooltip("Each pickup item can have its own destroy targets.")]
-    public List<PickupDestroyTargets> destroyMappings = new List<PickupDestroyTargets>();
-
     private FPSInputActions inputActions;
     [HideInInspector] public GameObject heldObject;
     [HideInInspector] public Rigidbody heldRigidbody;
 
-    // Track if object was picked by the player
-    public bool objectPickedByPlayer = false;
-
-    // ✅ coroutine handle for destruction
-    private Coroutine destroyCoroutine;
+    private PickupDestroyer destroyer;   // 🔗 Reference to destroy script
 
     private void Awake()
     {
@@ -92,9 +72,6 @@ public class PlayerPickup : MonoBehaviour
         {
             if (hit.collider.CompareTag("PickAble"))
             {
-                Debug.DrawRay(playerCamera.transform.position, playerCamera.transform.forward, Color.yellow, 30f);
-                Debug.Log(hit.transform.name);
-
                 TorchStand stand = hit.collider.GetComponent<TorchStand>();
 
                 if (heldObject == null)
@@ -126,52 +103,32 @@ public class PlayerPickup : MonoBehaviour
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, pickupRange);
 
-        GameObject closest = null;
-        float closestDist = float.MaxValue;
-
         foreach (var hit in hits)
         {
             PickupItem item = hit.GetComponent<PickupItem>();
             if (item != null && pickableObjects.Contains(item))
             {
-                Vector3 directionToObject = (hit.transform.position - playerCamera.transform.position).normalized;
-                float angle = Vector3.Angle(playerCamera.transform.forward, directionToObject);
+                heldObject = item.gameObject;
+                heldRigidbody = heldObject.GetComponent<Rigidbody>();
+                destroyer = heldObject.GetComponent<PickupDestroyer>();
 
-                if (angle <= maxAimAngle)
+                if (heldRigidbody != null)
                 {
-                    float dist = Vector3.Distance(transform.position, hit.transform.position);
-                    if (dist < closestDist)
-                    {
-                        closest = hit.gameObject;
-                        closestDist = dist;
-                    }
+                    heldRigidbody.isKinematic = true;
+                    heldRigidbody.detectCollisions = false;
                 }
-            }
-        }
 
-        if (closest != null)
-        {
-            heldObject = closest;
-            heldRigidbody = heldObject.GetComponent<Rigidbody>();
+                heldObject.transform.SetParent(holdPosition);
+                heldObject.transform.position = holdPosition.position;
+                heldObject.transform.rotation = holdPosition.rotation;
 
-            if (heldRigidbody != null)
-            {
-                heldRigidbody.isKinematic = true;
-                heldRigidbody.detectCollisions = false;
-            }
+                Debug.Log($"{heldObject.name} picked up!");
 
-            heldObject.transform.SetParent(holdPosition);
-            heldObject.transform.position = holdPosition.position;
-            heldObject.transform.rotation = holdPosition.rotation;
+                // 🔥 Trigger destroyer logic
+                if (destroyer != null && destroyer.destroyOnPickUp)
+                    destroyer.StartDestroyTimer(item);
 
-            Debug.Log($"{heldObject.name} picked up!");
-            objectPickedByPlayer = true;
-
-            // ✅ Start timed destruction
-            if (destroyOnPickUp)
-            {
-                if (destroyCoroutine != null) StopCoroutine(destroyCoroutine);
-                destroyCoroutine = StartCoroutine(DestroyAfterDelay(heldObject.GetComponent<PickupItem>()));
+                return;
             }
         }
     }
@@ -187,24 +144,20 @@ public class PlayerPickup : MonoBehaviour
             }
 
             heldObject.transform.SetParent(null);
-            Debug.Log("Item released!");
 
             // ❌ Cancel destruction
-            if (destroyCoroutine != null)
-            {
-                StopCoroutine(destroyCoroutine);
-                destroyCoroutine = null;
-            }
+            if (destroyer != null)
+                destroyer.CancelDestroy();
 
             heldObject = null;
             heldRigidbody = null;
-            objectPickedByPlayer = false;
+            destroyer = null;
         }
     }
 
     private void Throw()
     {
-        if (heldObject != null && heldRigidbody != null && playerCamera != null)
+        if (heldObject != null && heldRigidbody != null)
         {
             heldObject.transform.SetParent(null);
             heldRigidbody.isKinematic = false;
@@ -212,20 +165,16 @@ public class PlayerPickup : MonoBehaviour
 
             heldRigidbody.linearVelocity = Vector3.zero;
             heldRigidbody.angularVelocity = Vector3.zero;
-
             heldRigidbody.AddForce(playerCamera.transform.forward * throwForce, ForceMode.Impulse);
 
             Debug.Log("Item thrown!");
 
-            if (destroyCoroutine != null)
-            {
-                StopCoroutine(destroyCoroutine);
-                destroyCoroutine = null;
-            }
+            if (destroyer != null)
+                destroyer.CancelDestroy();
 
             heldObject = null;
             heldRigidbody = null;
-            objectPickedByPlayer = false;
+            destroyer = null;
         }
     }
 
@@ -233,6 +182,7 @@ public class PlayerPickup : MonoBehaviour
     {
         heldObject = stand.currentTorch;
         heldRigidbody = heldObject.GetComponent<Rigidbody>();
+        destroyer = heldObject.GetComponent<PickupDestroyer>();
 
         if (heldRigidbody != null)
         {
@@ -240,46 +190,25 @@ public class PlayerPickup : MonoBehaviour
             heldRigidbody.detectCollisions = false;
         }
 
-        Vector3 originalScale = heldObject.transform.lossyScale;
-
-        heldObject.transform.SetParent(holdPosition, worldPositionStays: true);
+        heldObject.transform.SetParent(holdPosition);
         heldObject.transform.position = holdPosition.position;
         heldObject.transform.rotation = holdPosition.rotation;
-
-        heldObject.transform.localScale = new Vector3(
-            originalScale.x / holdPosition.lossyScale.x,
-            originalScale.y / holdPosition.lossyScale.y,
-            originalScale.z / holdPosition.lossyScale.z
-        );
 
         stand.currentTorch = null;
 
         Debug.Log($"{heldObject.name} picked up from stand!");
-        objectPickedByPlayer = true;
 
-        // ✅ Start timed destruction
-        if (destroyOnPickUp)
-        {
-            if (destroyCoroutine != null) StopCoroutine(destroyCoroutine);
-            destroyCoroutine = StartCoroutine(DestroyAfterDelay(heldObject.GetComponent<PickupItem>()));
-        }
+        if (destroyer != null && destroyer.destroyOnPickUp)
+            destroyer.StartDestroyTimer(heldObject.GetComponent<PickupItem>());
     }
 
     private void PlaceOnStand(TorchStand stand)
     {
         if (heldObject != null)
         {
-            Vector3 originalScale = heldObject.transform.lossyScale;
-
             heldObject.transform.SetParent(stand.standPosition, worldPositionStays: true);
             heldObject.transform.position = stand.standPosition.position;
             heldObject.transform.rotation = stand.standPosition.rotation;
-
-            heldObject.transform.localScale = new Vector3(
-                originalScale.x / stand.standPosition.lossyScale.x,
-                originalScale.y / stand.standPosition.lossyScale.y,
-                originalScale.z / stand.standPosition.lossyScale.z
-            );
 
             if (heldRigidbody != null)
             {
@@ -289,56 +218,12 @@ public class PlayerPickup : MonoBehaviour
 
             stand.currentTorch = heldObject;
 
-            Debug.Log("Object placed on stand.");
-
-            // ❌ Cancel destruction
-            if (destroyCoroutine != null)
-            {
-                StopCoroutine(destroyCoroutine);
-                destroyCoroutine = null;
-            }
+            if (destroyer != null)
+                destroyer.CancelDestroy();
 
             heldObject = null;
             heldRigidbody = null;
-            objectPickedByPlayer = false;
+            destroyer = null;
         }
-    }
-
-    private IEnumerator DestroyAfterDelay(PickupItem item)
-    {
-        yield return new WaitForSeconds(destroyDelay);
-
-        if (heldObject != null && objectPickedByPlayer) // ✅ Only destroy if still held
-        {
-            // ✅ Destroy only child targets (like fire), not the heldObject itself
-            DestroyTargetsWithDelay(item);
-
-            // The stick (heldObject) stays intact
-        }
-
-        destroyCoroutine = null; // clear handle
-    }
-
-    private void DestroyTargetsWithDelay(PickupItem item)
-    {
-        if (item == null) return;
-        if (!objectPickedByPlayer) return;
-
-        var mapping = destroyMappings.Find(m => m.pickupItem == item);
-
-        if (mapping != null && mapping.destroyTargets.Count > 0)
-        {
-            foreach (var target in mapping.destroyTargets)
-            {
-                if (target != null)
-                    Destroy(target, 0f); // immediate
-            }
-        }
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, pickupRange);
     }
 }

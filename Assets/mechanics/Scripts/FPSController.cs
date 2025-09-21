@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterController))]
@@ -6,7 +6,7 @@ public class FPSController : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float walkSpeed = 5f;
-    public float sprintSpeed = 8f; // Added sprint speed
+    public float sprintSpeed = 8f;
     public float crouchSpeed = 2f;
     public float acceleration = 10f;
     public float deceleration = 10f;
