@@ -98,6 +98,15 @@ public partial class @FPSInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""ac1fb32f-e628-46a9-808f-c432876dcffc"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -320,6 +329,17 @@ public partial class @FPSInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""ThrowLight"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d51f98ba-94b3-4393-a2bd-cab5a315e5c1"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";KeyAndMouse"",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -364,6 +384,7 @@ public partial class @FPSInputActions: IInputActionCollection2, IDisposable
         m_Player_Pickup = m_Player.FindAction("Pickup", throwIfNotFound: true);
         m_Player_Throw = m_Player.FindAction("Throw", throwIfNotFound: true);
         m_Player_ThrowLight = m_Player.FindAction("ThrowLight", throwIfNotFound: true);
+        m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
     }
 
     ~@FPSInputActions()
@@ -438,6 +459,7 @@ public partial class @FPSInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Pickup;
     private readonly InputAction m_Player_Throw;
     private readonly InputAction m_Player_ThrowLight;
+    private readonly InputAction m_Player_Interact;
     public struct PlayerActions
     {
         private @FPSInputActions m_Wrapper;
@@ -450,6 +472,7 @@ public partial class @FPSInputActions: IInputActionCollection2, IDisposable
         public InputAction @Pickup => m_Wrapper.m_Player_Pickup;
         public InputAction @Throw => m_Wrapper.m_Player_Throw;
         public InputAction @ThrowLight => m_Wrapper.m_Player_ThrowLight;
+        public InputAction @Interact => m_Wrapper.m_Player_Interact;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -483,6 +506,9 @@ public partial class @FPSInputActions: IInputActionCollection2, IDisposable
             @ThrowLight.started += instance.OnThrowLight;
             @ThrowLight.performed += instance.OnThrowLight;
             @ThrowLight.canceled += instance.OnThrowLight;
+            @Interact.started += instance.OnInteract;
+            @Interact.performed += instance.OnInteract;
+            @Interact.canceled += instance.OnInteract;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -511,6 +537,9 @@ public partial class @FPSInputActions: IInputActionCollection2, IDisposable
             @ThrowLight.started -= instance.OnThrowLight;
             @ThrowLight.performed -= instance.OnThrowLight;
             @ThrowLight.canceled -= instance.OnThrowLight;
+            @Interact.started -= instance.OnInteract;
+            @Interact.performed -= instance.OnInteract;
+            @Interact.canceled -= instance.OnInteract;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -556,5 +585,6 @@ public partial class @FPSInputActions: IInputActionCollection2, IDisposable
         void OnPickup(InputAction.CallbackContext context);
         void OnThrow(InputAction.CallbackContext context);
         void OnThrowLight(InputAction.CallbackContext context);
+        void OnInteract(InputAction.CallbackContext context);
     }
 }
