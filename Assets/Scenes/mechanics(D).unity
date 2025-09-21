@@ -14,16 +14,16 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
-  m_Fog: 0
+  m_Fog: 1
   m_FogColor: {r: 0, g: 0, b: 0, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.16
+  m_FogDensity: 0.27
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 0.76
+  m_AmbientIntensity: 0.15
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
@@ -2975,8 +2975,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   torchPrefab: {fileID: 3975265845047524116, guid: db513366c94c99041b5f618f1c62332b, type: 3}
   torchHoldPosition: {fileID: 3116110168861453198}
+  playerCamera: {fileID: 7796546727106170300}
   maxTorches: 3
   torchBurnDuration: 15
+  maxPlaceDistance: 5
 --- !u!1 &7485681613027679792
 GameObject:
   m_ObjectHideFlags: 0
