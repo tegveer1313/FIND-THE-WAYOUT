@@ -13,6 +13,8 @@ namespace StarterAssets
 		public bool jump;
 		public bool sprint;
 
+		public bool drawPad;
+
 		[Header("Movement Settings")]
 		public bool analogMovement;
 
@@ -43,6 +45,11 @@ namespace StarterAssets
 		{
 			SprintInput(value.isPressed);
 		}
+
+		public void OnDrawPad(InputValue value)
+		{
+			DrawInput(value.isPressed);
+		}
 #endif
 
 
@@ -64,6 +71,11 @@ namespace StarterAssets
 		public void SprintInput(bool newSprintState)
 		{
 			sprint = newSprintState;
+		}
+
+		public void DrawInput(bool newDrawState)
+		{
+			drawPad = newDrawState;
 		}
 
 		private void OnApplicationFocus(bool hasFocus)
