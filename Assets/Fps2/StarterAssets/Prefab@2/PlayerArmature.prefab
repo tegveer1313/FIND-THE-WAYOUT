@@ -237,7 +237,7 @@ GameObject:
   - component: {fileID: 4482556221874955700}
   - component: {fileID: 7492677663004320723}
   - component: {fileID: 6965815320642157252}
-  - component: {fileID: 1200886167753486502}
+  - component: {fileID: 5835903669193804024}
   m_Layer: 8
   m_Name: PlayerArmature
   m_TagString: Player
@@ -253,9 +253,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1788705523040531811}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.25, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.2333, y: 1.2333, z: 1.2333}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9037117969446482082}
@@ -388,9 +388,10 @@ MonoBehaviour:
   look: {x: 0, y: 0}
   jump: 0
   sprint: 0
+  drawPad: 0
   analogMovement: 0
-  cursorLocked: 1
-  cursorInputForLook: 1
+  cursorLocked: 0
+  cursorInputForLook: 0
 --- !u!114 &6965815320642157252
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -489,7 +490,7 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &1200886167753486502
+--- !u!114 &5835903669193804024
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -498,28 +499,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1788705523040531811}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2400b4c66570ed54497e95d6387ac21c, type: 3}
+  m_Script: {fileID: 11500000, guid: c37d569739afd794cb68a576a79d14c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HitLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  holdPosition: {fileID: 4345303095032467006}
-  throwForce: 10
-  pickupRange: 3
-  pickableObjects:
-  - {fileID: 0}
-  - {fileID: 0}
-  maxAimAngle: 15
-  playerCamera: {fileID: 0}
-  destroyOnPickUp: 0
-  destroyDelay: 5
-  destroyMappings:
-  - pickupItem: {fileID: 0}
-    destroyTargets: []
-  heldObject: {fileID: 0}
-  heldRigidbody: {fileID: 0}
-  objectPickedByPlayer: 0
+  drawingCanvasObject: {fileID: 0}
+  saveFileName: drawing.png
+  inputs: {fileID: 7492677663004320723}
 --- !u!1 &1889114930340058882
 GameObject:
   m_ObjectHideFlags: 0

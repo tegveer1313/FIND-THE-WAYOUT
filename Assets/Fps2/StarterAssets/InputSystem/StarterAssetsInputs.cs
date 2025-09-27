@@ -78,7 +78,7 @@ namespace StarterAssets
 			drawPad = newDrawState;
 		}
 
-		private void OnApplicationFocus(bool hasFocus)
+		public void OnApplicationFocus(bool hasFocus)
 		{
 			SetCursorState(cursorLocked);
 		}
